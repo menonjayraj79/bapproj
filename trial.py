@@ -193,7 +193,7 @@ app.layout = html.Div(children=[
     performance_line_graph,
     html.H1(children='Lab Performance Analysis'),
     pie_chart
-])
+])    
 
 
 if __name__ == '__main__':
