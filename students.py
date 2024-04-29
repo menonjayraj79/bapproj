@@ -18,9 +18,9 @@ marks = pd.read_excel('Acomplete.xlsx')
 
 # Define dropdown options
 dropdown_options = [
-    {'label': 'sub 1', 'value': 'Bcomplete.xlsx'},
-    {'label': 'sub 2', 'value': 'Ccomplete.xlsx'},
-    {'label': 'sub 3', 'value': 'Acomplete.xlsx'}
+    {'label': 'Data Structures', 'value': 'Bcomplete.xlsx'},
+    {'label': 'Linear Algebra', 'value': 'Ccomplete.xlsx'},
+    {'label': 'Operating Systems', 'value': 'Acomplete.xlsx'}
 ]
 
 # Create dropdown component
@@ -587,7 +587,8 @@ Acomplete = pd.read_excel('Acomplete.xlsx')  # Load data for Course A
 Bcomplete = pd.read_excel('Bcomplete.xlsx')  # Load data for Course B
 Ccomplete = pd.read_excel('Ccomplete.xlsx')  # Load data for Course C
 Dcomplete = pd.read_excel('Dcomplete.xlsx')  # Load data for Course D
-Ecomplete = pd.read_excel('Ecomplete.xlsx')  # Load data for Course E
+Ecomplete = pd.read_excel('Fcomplete.xlsx')  # Load data for Course E
+Fcomplete = pd.read_excel('Fcomplete.xlsx')  # Load data for Course F
 
 
 value = int(2010300075)
@@ -1166,7 +1167,7 @@ tabs = dbc.Tabs(
         dbc.Tab(tab2B_content, label="Bar Chart"),
         dbc.Tab(tab3B_content, label="Scatter Plot"),
         dbc.Tab(tab4B_content, label="Pie Chart"),
-        dbc.Tab(tab5B_content, label="Box Plot"),
+        # dbc.Tab(tab5B_content, label="Box Plot"),
         dbc.Tab(tab6B_content, label="Bar Chart"),
         dbc.Tab(tab7B_content, label="Scatter Plot"),
     ]
