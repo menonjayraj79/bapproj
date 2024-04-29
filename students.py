@@ -559,7 +559,7 @@ navbar = dbc.Navbar(
 )
 
 
-# add callback for toggling the collapse on small screens
+# add callback for toggling the bar on small screens
 @app.callback(
     Output("navbar-collapse", "is_open"),
     [Input("navbar-toggler", "n_clicks")],
@@ -1167,8 +1167,8 @@ tabs = dbc.Tabs(
         dbc.Tab(tab3B_content, label="Scatter Plot"),
         dbc.Tab(tab4B_content, label="Pie Chart"),
         dbc.Tab(tab5B_content, label="Box Plot"),
-        dbc.Tab(tab6B_content, label="Scatter Plot"),
-        dbc.Tab(tab7B_content, label="Histogram"),
+        dbc.Tab(tab6B_content, label="Bar Chart"),
+        dbc.Tab(tab7B_content, label="Scatter Plot"),
     ]
 )
 prescriptive_analysis = dbc.Container(dbc.Container(html.Div(
