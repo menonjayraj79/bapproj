@@ -10,16 +10,17 @@ from dash import Input, Output, State, html
 from dash_bootstrap_components._components.Container import Container
 
 # Create the Dash application
-app = dash.Dash(__name__, suppress_callback_exceptions=True)
+app = dash.Dash(__name__, external_stylesheets=[
+                dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True)
 
 
 marks = pd.read_excel('Acomplete.xlsx')
 
 # Define dropdown options
 dropdown_options = [
-    {'label': 'sub 1', 'value': 'Bcomplete.xlsx'},
-    {'label': 'sub 2', 'value': 'Ccomplete.xlsx'},
-    {'label': 'sub 3', 'value': 'Acomplete.xlsx'}
+    {'label': 'Data Structures', 'value': 'Bcomplete.xlsx'},
+    {'label': 'Linear Algebra', 'value': 'Ccomplete.xlsx'},
+    {'label': 'Operating Systems', 'value': 'Acomplete.xlsx'}
 ]
 
 # Create dropdown component
@@ -33,7 +34,7 @@ dropdown = dcc.Dropdown(
 marks = pd.read_excel(dropdown.value)
 
 
-@app.callback(
+@ app.callback(
     dash.dependencies.Output('marks', 'children'),
     [dash.dependencies.Input('file-dropdown', 'value')]
 )
@@ -52,14 +53,14 @@ def update_marks(selected_file):
 
 
 # Calculate the proportion of students who achieved different ranges of lab scores
-@app.callback(
+@ app.callback(
     dash.dependencies.Output('pie', 'figure'),
     [dash.dependencies.Input('file-dropdown', 'value')]
 )
 def update_pie_chart(selected_file):
     marks = pd.read_excel(selected_file)
     lab_scores_ranges = pd.cut(marks['labConverted40'], bins=[
-                               0, 10, 20, 30, 40], labels=['0-10', '10-20', '20-30', '30-40'])
+        0, 10, 20, 30, 40], labels=['0-10', '10-20', '20-30', '30-40'])
     lab_scores_proportions = lab_scores_ranges.value_counts(normalize=True)
 
     pie_chart = {
@@ -256,8 +257,8 @@ box_plot = dcc.Graph(
                 'marker': {
                     'color': '#00CC96'
                 },
-                'boxpoints': 'all',
-                'jitter': 0.3,
+                # 'boxpoints': 'all',
+                # 'jitter': 0.3,
                 'pointpos': -1.8
             } for x in teacher_marks.groups
         ],
@@ -292,9 +293,9 @@ def update_box_plot(selected_file):
                 'marker': {
                     'color': '#00CC96'
                 },
-                'boxpoints': 'all',
-                'jitter': 0.3,
-                'pointpos': -1.8
+                    'boxpoints': 'all',
+                    # 'jitter': 0.3,
+                    'pointpos': -0.1
             } for x in teacher_marks.groups
         ],
         'layout': {
@@ -503,30 +504,27 @@ tab7_content = html.Div([
 
 tabs = dbc.Tabs(
     [
-        dbc.Tab(tab1_content, label="Tab 1"),
-        dbc.Tab(tab2_content, label="Tab 2"),
-        dbc.Tab(tab3_content, label="Tab 3"),
-        dbc.Tab(tab4_content, label="Tab 4"),
-        dbc.Tab(tab5_content, label="Tab 5"),
-        dbc.Tab(tab6_content, label="Tab 6"),
-        dbc.Tab(tab7_content, label="Tab 7"),
+        dbc.Tab(tab1_content, label="Bar Chart"),
+        dbc.Tab(tab2_content, label="Scatter Plot"),
+        dbc.Tab(tab3_content, label="Line Graph"),
+        dbc.Tab(tab4_content, label="Box Plot"),
+        dbc.Tab(tab5_content, label="Histogram"),
+        dbc.Tab(tab6_content, label="Line Graph"),
+        dbc.Tab(tab7_content, label="Pie Chart"),
     ]
 )
 PLOTLY_LOGO = "https://images.plot.ly/logo/new-branding/plotly-logomark.png"
 
-search_bar = dbc.Row(
-    [
-        dbc.Col(dbc.Input(type="search", placeholder="Search")),
-        dbc.Col(
-            dbc.Button(
-                "Search", color="primary", className="ms-2", n_clicks=0
-            ),
-            width="auto",
-        ),
-    ],
-    className="g-0 ms-auto flex-nowrap mt-3 mt-md-0",
-    align="center",
-)
+nav_contents = [
+    dbc.NavItem(dbc.NavLink("Prescriptive Analysis", href="/prescriptive_analysis",
+                active=True), style={'margin-right': '10px'}),
+    dbc.NavItem(dbc.NavLink("Descriptive Analysis", href="/descriptive_analysis",
+                active=True), style={'margin-right': '10px'}),
+]
+
+nav1 = dbc.Nav(nav_contents, pills=True, fill=True)
+
+navs = html.Div([nav1])
 
 navbar = dbc.Navbar(
     dbc.Container(
@@ -536,7 +534,7 @@ navbar = dbc.Navbar(
                 dbc.Row(
                     [
                         dbc.Col(html.Img(src=PLOTLY_LOGO, height="30px")),
-                        dbc.Col(dbc.NavbarBrand("Navbar", className="ms-2")),
+                        dbc.Col(dbc.NavbarBrand("Student Marks Analysis", className="ms-2")),
                     ],
                     align="center",
                     className="g-0",
@@ -546,10 +544,12 @@ navbar = dbc.Navbar(
             ),
             dbc.NavbarToggler(id="navbar-toggler", n_clicks=0),
             dbc.Collapse(
-                search_bar,
+                # search_bar,
+                navs,
                 id="navbar-collapse",
                 is_open=False,
                 navbar=True,
+                className="justify-content-end",  # Add right alignment
             ),
         ]
     ),
@@ -559,7 +559,7 @@ navbar = dbc.Navbar(
 )
 
 
-# add callback for toggling the collapse on small screens
+# add callback for toggling the bar on small screens
 @app.callback(
     Output("navbar-collapse", "is_open"),
     [Input("navbar-toggler", "n_clicks")],
@@ -579,7 +579,7 @@ descriptive_analysis = dbc.Container(html.Div(
         tabs
     ],
     style={'background': 'black',
-           'color': 'white', 'font-family': 'Arial'}
+           'color': 'black', 'font-family': 'Arial'}
 ))
 
 
@@ -587,7 +587,8 @@ Acomplete = pd.read_excel('Acomplete.xlsx')  # Load data for Course A
 Bcomplete = pd.read_excel('Bcomplete.xlsx')  # Load data for Course B
 Ccomplete = pd.read_excel('Ccomplete.xlsx')  # Load data for Course C
 Dcomplete = pd.read_excel('Dcomplete.xlsx')  # Load data for Course D
-Ecomplete = pd.read_excel('Ecomplete.xlsx')  # Load data for Course E
+Ecomplete = pd.read_excel('Fcomplete.xlsx')  # Load data for Course E
+Fcomplete = pd.read_excel('Fcomplete.xlsx')  # Load data for Course F
 
 
 value = int(2010300075)
@@ -1108,13 +1109,76 @@ def update_histogramS(n_clicks, value):
     return go.Figure(data=data, layout=layout)
 
 
-prescriptive_analysis = html.Div(
-    style={
-        'backgroundColor': 'rgb(17, 17, 17)',
-        'color': 'rgb(255, 255, 255)',
-        'padding': '10px'
-    },
+tab1B_content = html.Div([
+    dcc.Graph(
+        id='line-graph',
+        style={'height': '400px'}
+    ),],
+    className="mt-1 mb-3",
+)
+
+tab2B_content = html.Div([
+    dcc.Graph(
+        id='bar-chart',
+        style={'height': '400px'}
+    ),],
+    className="mt-1 mb-3",
+)
+tab3B_content = html.Div([
+    dcc.Graph(
+        id='scatter-plot',
+        style={'height': '400px'}
+    ),],
+    className="mt-1 mb-3",
+)
+tab4B_content = html.Div([
+    dcc.Graph(
+        id='pie-chart',
+        style={'height': '400px'}
+    ),],
+    className="mt-1 mb-3",
+)
+tab5B_content = html.Div([
+    dcc.Graph(
+        id='box-plot',
+        style={'height': '400px'}
+    ),],
+    className="mt-1 mb-3",
+)
+tab6B_content = html.Div([
+    dcc.Graph(
+        id='histogramS',
+        style={'height': '400px'}
+    ),],
+    className="mt-1 mb-3",
+)
+tab7B_content = html.Div([
+    dcc.Graph(
+        id='scatter-plot-lab-theory',
+        style={'height': '400px'}
+    )],
+    className="mt-1 mb-3",
+)
+
+
+tabs = dbc.Tabs(
+    [
+        dbc.Tab(tab1B_content, label="Line Graph"),
+        dbc.Tab(tab2B_content, label="Bar Chart"),
+        dbc.Tab(tab3B_content, label="Scatter Plot"),
+        dbc.Tab(tab4B_content, label="Pie Chart"),
+        # dbc.Tab(tab5B_content, label="Box Plot"),
+        dbc.Tab(tab6B_content, label="Bar Chart"),
+        dbc.Tab(tab7B_content, label="Scatter Plot"),
+    ]
+)
+prescriptive_analysis = dbc.Container(dbc.Container(html.Div(
+
+
     children=[
+        navbar,
+        # accordion,
+        
         dcc.Input(
             id='uid-input',
             type='number',
@@ -1142,40 +1206,17 @@ prescriptive_analysis = html.Div(
                 'cursor': 'pointer'
             }
         ),
+        
         html.Div(id='output-container'),
-        dcc.Graph(
-            id='line-graph',
-            style={'height': '400px'}
-        ),
-        dcc.Graph(
-            id='bar-chart',
-            style={'height': '400px'}
-        ),
-        dcc.Graph(
-            id='scatter-plot',
-            style={'height': '400px'}
-        ),
-        dcc.Graph(
-            id='pie-chart',
-            style={'height': '400px'}
-        ),
-        dcc.Graph(
-            id='box-plot',
-            style={'height': '400px'}
-        ),
-        dcc.Graph(
-            id='histogramS',
-            style={'height': '400px'}
-        ),
-        dcc.Graph(
-            id='scatter-plot-lab-theory',
-            style={'height': '400px'}
-        ),
-        html.P('Go to the '),
-        dcc.Link('Descriptive Analysis', href='/descriptive_analysis'),
-    ]
-)
-
+        tabs,
+        
+        
+        ], style={
+        'backgroundColor': 'rgb(17, 17, 17)',
+        'color': 'rgb(255, 255, 255)',
+        'padding': '10px'
+    },
+)))
 # Run the app
 
 
@@ -1189,10 +1230,18 @@ def display_page(pathname):
 
 
 # Define the layout of the application
-app.layout = dbc.Container(html.Div([
-    dcc.Location(id='url', refresh=False),
-    dbc.Container(html.Div(id='page-content')),
-]))
+app.layout = dbc.Container(html.Div(
+    children=[
+        dcc.Location(id='url', refresh=False),
+        dbc.Container(html.Div(id='page-content')),
+    ],
+)
+)
+
+
+# app.layout =
+
+
 # Run the application
 if __name__ == '__main__':
     app.run_server(debug=True)

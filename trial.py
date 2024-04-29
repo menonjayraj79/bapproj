@@ -5,12 +5,24 @@ import pandas as pd
 import dash_bootstrap_components as dbc
 from dash import Input, Output, State, html
 from dash_bootstrap_components._components.Container import Container
-
+import sqlite3
 
 # Create Dash app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+df = pd.read_excel('Acomplete.xlsx')
 
-marks = pd.read_excel('Acomplete.xlsx')
+# Connect to the SQLite database
+conn = sqlite3.connect('marks.db')  # Replace 'your_database_name.db' with your actual database name
+df.to_sql("marks", conn, index=False)  # 'projects' is the table name
+# Read data from the SQLite database into a DataFrame
+query = "SELECT * FROM marks"  # Replace 'your_table_name' with your actual table name
+marks = pd.read_sql_query(query, conn)
+
+# Close the connection
+conn.close()
+
+# Now you have your data in the 'marks' DataFrame
+print(marks.head())  # Check the first few rows to verify
 
 # Define dropdown options
 dropdown_options = [
@@ -567,7 +579,7 @@ def toggle_navbar_collapse(n, is_open):
     return is_open
 
 
-app.layout = dbc.Container(html.Div(
+app.layout = dbc.Container(dbc.Container(html.Div(
     children=[
         navbar,
         dropdown,
@@ -576,7 +588,7 @@ app.layout = dbc.Container(html.Div(
     ],
     style={'background': 'black',
            'color': 'white', 'font-family': 'Arial'}
-))
+)))
 
 # Run the app
 if __name__ == '__main__':

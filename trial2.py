@@ -4,9 +4,10 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import pandas as pd
-from update_histogram import update_histogram
-
-app = dash.Dash(__name__)
+import dash_bootstrap_components as dbc
+from dash import Input, Output, State, html
+from dash_bootstrap_components._components.Container import Container
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 # Load datasets
 Acomplete = pd.read_excel('Acomplete.xlsx')  # Load data for Course A
@@ -15,17 +16,18 @@ Ccomplete = pd.read_excel('Ccomplete.xlsx')  # Load data for Course C
 Dcomplete = pd.read_excel('Dcomplete.xlsx')  # Load data for Course D
 Ecomplete = pd.read_excel('Ecomplete.xlsx')  # Load data for Course E
 
-
-value=int(2010300075)
+value = int(2010300075)
 
 # Callback function to update the output container
+
+
 @app.callback(
     Output('output-container', 'children'),
     [Input('submit-val', 'n_clicks')],
     [dash.dependencies.State('uid-input', 'value')]
 )
 def update_output(n_clicks, value):
-    
+
     if value is None:
         print('Enter a UID')
         return 'Enter a UID'
@@ -68,6 +70,8 @@ def update_output(n_clicks, value):
     ])
 
 # Callback function to update the line graph
+
+
 @app.callback(
     Output('line-graph', 'figure'),
     [Input('submit-val', 'n_clicks')],
@@ -141,6 +145,8 @@ def update_graph(n_clicks, value):
         return go.Figure(data=data, layout=layout)
 
 # Callback function to update the bar chart
+
+
 @app.callback(
     Output('bar-chart', 'figure'),
     [Input('submit-val', 'n_clicks')],
@@ -199,6 +205,8 @@ def update_bar_chart(n_clicks, value):
         return go.Figure(data=data, layout=layout)
 
 # Callback function to update the scatter plot
+
+
 @app.callback(
     Output('scatter-plot', 'figure'),
     [Input('submit-val', 'n_clicks')],
@@ -277,6 +285,8 @@ def update_scatter_plot(n_clicks, value):
         return go.Figure(data=data, layout=layout)
 
 # Callback function to update the pie chart
+
+
 @app.callback(
     Output('pie-chart', 'figure'),
     [Input('submit-val', 'n_clicks')],
@@ -319,6 +329,8 @@ def update_pie_chart(n_clicks, value):
         return go.Figure(data=data, layout=layout)
 
 # Callback function to update the box plot
+
+
 @app.callback(
     Output('box-plot', 'figure'),
     [Input('submit-val', 'n_clicks')],
@@ -401,6 +413,8 @@ def update_box_plot(n_clicks, value):
         return go.Figure(data=data, layout=layout)
 
 # Callback function to update the scatter plot for lab vs theory performance
+
+
 @app.callback(
     Output('scatter-plot-lab-theory', 'figure'),
     [Input('submit-val', 'n_clicks')],
@@ -462,7 +476,6 @@ def update_scatter_plot_lab_theory(n_clicks, value):
 
         data = [trace_A, trace_B, trace_C, trace_D, trace_E]
 
-  
         layout = go.Layout(
             title='Lab vs Theory Performance Across Courses',
             xaxis=dict(title='Lab Score'),
@@ -519,18 +532,140 @@ def update_histogram(n_clicks, value):
     return go.Figure(data=data, layout=layout)
 
 
-app.layout = html.Div(
-    style={
-        'backgroundColor': 'rgb(17, 17, 17)',
-        'color': 'rgb(255, 255, 255)',
-        'padding': '10px'
-    },
+tab1_content = html.Div([
+    dcc.Graph(
+        id='line-graph',
+        style={'height': '400px'}
+    ),],
+    className="mt-1 mb-3",
+)
+
+tab2_content = html.Div([
+    dcc.Graph(
+        id='bar-chart',
+        style={'height': '400px'}
+    ),],
+    className="mt-1 mb-3",
+)
+tab3_content = html.Div([
+    dcc.Graph(
+        id='scatter-plot',
+        style={'height': '400px'}
+    ),],
+    className="mt-1 mb-3",
+)
+tab4_content = html.Div([
+    dcc.Graph(
+        id='pie-chart',
+        style={'height': '400px'}
+    ),],
+    className="mt-1 mb-3",
+)
+tab5_content = html.Div([
+    dcc.Graph(
+        id='box-plot',
+        style={'height': '400px'}
+    ),],
+    className="mt-1 mb-3",
+)
+tab6_content = html.Div([
+    dcc.Graph(
+        id='histogram',
+        style={'height': '400px'}
+    ),],
+    className="mt-1 mb-3",
+)
+tab7_content = html.Div([
+    dcc.Graph(
+        id='scatter-plot-lab-theory',
+        style={'height': '400px'}
+    )],
+    className="mt-1 mb-3",
+)
+
+
+tabs = dbc.Tabs(
+    [
+        dbc.Tab(tab1_content, label="Tab 1"),
+        dbc.Tab(tab2_content, label="Tab 2"),
+        dbc.Tab(tab3_content, label="Tab 3"),
+        dbc.Tab(tab4_content, label="Tab 4"),
+        dbc.Tab(tab5_content, label="Tab 5"),
+        dbc.Tab(tab6_content, label="Tab 6"),
+        dbc.Tab(tab7_content, label="Tab 7"),
+    ]
+)
+PLOTLY_LOGO = "https://images.plot.ly/logo/new-branding/plotly-logomark.png"
+
+search_bar = dbc.Row(
+    [
+        dbc.Col(dbc.Input(type="search", placeholder="Search")),
+        dbc.Col(
+            dbc.Button(
+                "Search", color="primary", className="ms-2", n_clicks=0
+            ),
+            width="auto",
+        ),
+    ],
+    className="g-0 ms-auto flex-nowrap mt-3 mt-md-0",
+    align="center",
+)
+
+navbar = dbc.Navbar(
+    dbc.Container(
+        [
+            html.A(
+                # Use row and col to control vertical alignment of logo / brand
+                dbc.Row(
+                    [
+                        dbc.Col(html.Img(src=PLOTLY_LOGO, height="30px")),
+                        dbc.Col(dbc.NavbarBrand("Navbar", className="ms-2")),
+                    ],
+                    align="center",
+                    className="g-0",
+                ),
+                href="https://plotly.com",
+                style={"textDecoration": "none"},
+            ),
+            dbc.NavbarToggler(id="navbar-toggler", n_clicks=0),
+            dbc.Collapse(
+                search_bar,
+                id="navbar-collapse",
+                is_open=False,
+                navbar=True,
+            ),
+        ]
+    ),
+    color="black",
+    dark=True,
+    className=" mb-3",  # Add bottom margin
+)
+
+
+# add callback for toggling the collapse on small screens
+@app.callback(
+    Output("navbar-collapse", "is_open"),
+    [Input("navbar-toggler", "n_clicks")],
+    [State("navbar-collapse", "is_open")],
+)
+def toggle_navbar_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
+
+app.layout = dbc.Container(dbc.Container(html.Div(
+
+
     children=[
+        navbar,
+        # accordion,
+        tabs,
         dcc.Input(
             id='uid-input',
             type='number',
             placeholder='Enter UID',
-           
+
             style={
                 'backgroundColor': 'rgb(34, 34, 34)',
                 'color': 'rgb(255, 255, 255)',
@@ -553,36 +688,14 @@ app.layout = html.Div(
                 'cursor': 'pointer'
             }
         ),
-        html.Div(id='output-container'),
-        dcc.Graph(
-            id='line-graph',
-            style={'height': '400px'}
-        ),
-        dcc.Graph(
-            id='bar-chart',
-            style={'height': '400px'}
-        ),
-        dcc.Graph(
-            id='scatter-plot',
-            style={'height': '400px'}
-        ),
-        dcc.Graph(
-            id='pie-chart',
-            style={'height': '400px'}
-        ),
-        dcc.Graph(
-            id='box-plot',
-            style={'height': '400px'}
-        ),
-        dcc.Graph(
-            id='histogram',
-            style={'height': '400px'}
-        ),
-        dcc.Graph(
-            id='scatter-plot-lab-theory',
-            style={'height': '400px'}
-        )
-    ]
-)
+        html.Div(id='output-container'),], style={
+        'backgroundColor': 'rgb(17, 17, 17)',
+        'color': 'rgb(255, 255, 255)',
+        'padding': '10px'
+    },
+)))
+
+# Run the app
+
 if __name__ == '__main__':
     app.run_server(debug=True)
