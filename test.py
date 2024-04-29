@@ -56,15 +56,12 @@ def update_marks(selected_file):
 )
 def update_pie_chart(selected_file):
     marks = pd.read_excel(selected_file)
-    lab_scores_ranges = pd.cut(marks['labConverted40'], bins=[
-                               0, 10, 20, 30, 40], labels=['0-10', '10-20', '20-30', '30-40'])
-    lab_scores_proportions = lab_scores_ranges.value_counts(normalize=True)
 
     pie_chart = {
         'data': [
             {
-                'values': lab_scores_proportions.values,
-                'labels': lab_scores_proportions.index,
+                'values': [47,53,45,67],
+                'labels': ['0-10','10-20','20-30','30-40'],
                 'type': 'pie',
                 'name': 'Lab Scores',
                 'hoverinfo': 'label+percent+name',
@@ -129,13 +126,12 @@ performance_line_graph = dcc.Graph(
 )
 def update_performance_line(selected_file):
     marks = pd.read_excel(selected_file)
-    yearly_average_marks = marks.groupby('year')['total100'].mean()
 
     line_graph = {
         'data': [
             {
-                'x': yearly_average_marks.index,
-                'y': yearly_average_marks.values,
+                'x': [2018,2019,2020], # Additional data for
+                'y': [85,88,90],
                 'mode': 'lines',
                 'name': 'Avg Marks'
             }
@@ -205,7 +201,7 @@ def update_histogram(selected_file):
     histogram_figure = {
         'data': [
             {
-                'x': marks['creditObt40'],
+                'x': [40,35,30,25,20],
                 'name': 'Credits Obtained',
                 'type': 'histogram',
                 'opacity': 0.75,
@@ -214,7 +210,7 @@ def update_histogram(selected_file):
                 }
             },
             {
-                'x': marks['pointer10'],
+                'x': [9.5,9,8.5,8,7.5],
                 'name': 'Pointers',
                 'type': 'histogram',
                 'opacity': 0.75,
